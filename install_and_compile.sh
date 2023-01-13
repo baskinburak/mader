@@ -17,14 +17,6 @@ path_to_ws=$(pwd)
 
 #INSTALL CGAL v4.14.2
 ##########################################
-sudo apt-get install libgmp3-dev libmpfr-dev -y
-mkdir -p ~/installations/cgal
-cd ~/installations/cgal
-wget https://github.com/CGAL/cgal/releases/download/releases%2FCGAL-4.14.2/CGAL-4.14.2.tar.xz
-tar -xf CGAL-4.14.2.tar.xz
-cd CGAL-4.14.2/
-cmake . -DCMAKE_BUILD_TYPE=Release
-sudo make install
 
 #INSTALL python-catkin-tools (to be able to use catkin build)
 ##########################################
