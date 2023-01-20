@@ -173,8 +173,8 @@ class Mader {
     std::unique_ptr<SolverGurobi>
         solver_;  // pointer to the optimization solver
 #else
-    // std::unique_ptr<SolverNlopt> solver_;  // pointer to the optimization
-    // solver
+    std::unique_ptr<SolverNlopt> solver_;  // pointer to the optimization
+                                           // solver
 #endif
 
     Eigen::Matrix<double, 4, 4> A_rest_pos_basis_;

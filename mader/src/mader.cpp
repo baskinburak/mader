@@ -182,6 +182,7 @@ void Mader::dynTraj2dynTrajCompiled(const mt::dynTraj& traj,
         traj.time_received;  // ros::Time::now().toSec();
 
     traj_compiled.is_static = traj.is_static;
+    traj_compiled.is_agent = traj.is_agent;
 
     traj_compiled.pwp = traj.pwp;
     traj_compiled.traj = traj.traj;
@@ -190,8 +191,10 @@ void Mader::dynTraj2dynTrajCompiled(const mt::dynTraj& traj,
 // in mader.hpp
 void Mader::updateTrajObstacles(mt::dynTraj traj, double current_timestamp) {
     MyTimer tmp_t(true);
+    current_timestamp_ = current_timestamp;
 
     if (started_check_ == true && traj.is_agent == true) {
+        std::cout << "noo THIS SHOULD NEVER HAPPEN!!!!" << std::endl;
         have_received_trajectories_while_checking_ = true;
     }
 
@@ -396,7 +399,7 @@ std::vector<Eigen::Vector3d> Mader::vertexesOfInterval(
 
         return points;
     } else {  // is an agent --> use the pwp field
-
+        std::cout << "THIS SHOULD NOT HAPPEN!!!" << std::endl;
         delta = traj.bbox / 2.0 + (par_.drone_radius) * Eigen::Vector3d::Ones();
         // std::cout << "****traj.bbox = " << traj.bbox << std::endl;
         // std::cout << "****par_.drone_radius = " << par_.drone_radius <<
@@ -566,10 +569,10 @@ void Mader::setTerminalGoal(mt::state& term_goal) {
     G_term_.pos = term_goal.pos;
     Eigen::Vector3d temp = state_.pos;
     G_.pos = G_term_.pos;
-    if (drone_status_ == DroneStatus::GOAL_REACHED ||
-        drone_status_ == DroneStatus::GOAL_SEEN) {
-        changeDroneStatus(DroneStatus::TRAVELING);
-    }
+    changeDroneStatus(DroneStatus::TRAVELING);
+    // if (drone_status_ == DroneStatus::GOAL_REACHED ||
+    //     drone_status_ == DroneStatus::GOAL_SEEN) {
+    // }
     terminal_goal_initialized_ = true;
 
     // std::cout << bold << red << "[FA] Received Term Goal=" <<
@@ -721,7 +724,7 @@ bool Mader::isReplanningNeeded() {
     double dist_to_goal = (G_term.pos - plan_.front().pos).norm();
     // std::cout << "dist_to_goal= " << dist_to_goal << std::endl;
     if (dist_to_goal < par_.goal_radius) {
-        changeDroneStatus(DroneStatus::GOAL_REACHED);
+        // changeDroneStatus(DroneStatus::GOAL_REACHED);
         exists_previous_pwp_ = false;
     }
 
@@ -733,7 +736,7 @@ bool Mader::isReplanningNeeded() {
     mtx_plan_.unlock();
     if (dist_last_plan_to_goal < par_.goal_radius &&
         drone_status_ == DroneStatus::TRAVELING) {
-        changeDroneStatus(DroneStatus::GOAL_SEEN);
+        // changeDroneStatus(DroneStatus::GOAL_SEEN);
         std::cout << "Status changed to GOAL_SEEN!" << std::endl;
         exists_previous_pwp_ = false;
     }
@@ -742,8 +745,8 @@ bool Mader::isReplanningNeeded() {
     if (drone_status_ == DroneStatus::GOAL_REACHED ||
         (drone_status_ == DroneStatus::YAWING) ||
         (drone_status_ == DroneStatus::GOAL_SEEN)) {
-        // std::cout << "No replanning needed because" << std::endl;
-        // printDroneStatus();
+        std::cout << "No replanning needed because" << std::endl;
+        printDroneStatus();
         return false;
     }
     return true;
@@ -789,11 +792,11 @@ bool Mader::replan(mt::Edges& edges_obstacles_out,
 
     k_index_end = std::max((int)(plan_.size() - deltaT_), 0);
 
+    k_index_end = plan_.size() - 1;
     if (plan_.size() < 5) {
         k_index_end = 0;
     }
 
-    k_index_end = plan_.size() - 1;
     k_index = plan_.size() - 1 - k_index_end;
     // k_index = 0;
     std::cout << "k_index: " << k_index << std::endl;
@@ -1000,7 +1003,7 @@ bool Mader::replan(mt::Edges& edges_obstacles_out,
     double dist = (G_term_.pos - F.pos).norm();
 
     if (dist < par_.goal_radius) {
-        changeDroneStatus(DroneStatus::GOAL_SEEN);
+        // changeDroneStatus(DroneStatus::GOAL_SEEN);
     }
 
     mtx_offsets.lock();
