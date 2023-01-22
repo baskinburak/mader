@@ -186,6 +186,7 @@ void Mader::dynTraj2dynTrajCompiled(const mt::dynTraj& traj,
 
     traj_compiled.pwp = traj.pwp;
     traj_compiled.traj = traj.traj;
+    traj_compiled.alpha = traj.alpha;
 }
 // Note that we need to compile the trajectories inside mader.cpp because t_ is
 // in mader.hpp
@@ -350,7 +351,7 @@ std::vector<Eigen::Vector3d> Mader::vertexesOfInterval(
     if (traj.is_agent == false) {
         std::vector<Eigen::Vector3d> points;
         delta = traj.bbox / 2.0 +
-                (par_.drone_radius + par_.beta + par_.alpha) *
+                (par_.drone_radius + par_.beta + par_.alpha + traj.alpha) *
                     Eigen::Vector3d::Ones();  // every side of the box will be
                                               // increased by 2*delta
                                               //(+delta on one end, -delta on

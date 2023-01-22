@@ -514,6 +514,7 @@ struct dynTraj {
                            // agent
     bool is_agent;  // true for a trajectory of an agent, false for an obstacle
     bool is_static;
+    double alpha;
     mt::PieceWisePol pwp;
 };
 
@@ -526,6 +527,7 @@ struct dynTrajCompiled {
                            // agent
     bool is_agent;  // true for a trajectory of an agent, false for an obstacle
     bool is_static;
+    double alpha;
     mt::PieceWisePol pwp;
 };
 
